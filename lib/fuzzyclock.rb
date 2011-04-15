@@ -1,8 +1,6 @@
-#!/usr/bin/env ruby
-#
-# Class to imitate the basic functionality of the cool
-# FuzzyClock application http://www.objectpark.org/FuzzyClock.html
-# e.g. 10:34 is shown as "twenty-five to eleven"
+# encoding: utf-8
+
+require 'fuzzyclock/version'
 
 class FuzzyClock
   @@HourToString = {
@@ -61,10 +59,3 @@ class FuzzyClock
     end
   end
 end
-
-# Main program
-if $0 == __FILE__
-  t = FuzzyClock.new
-  puts "It's about " + t.to_s
-end
-

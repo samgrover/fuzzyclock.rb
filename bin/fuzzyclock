@@ -1,0 +1,37 @@
+#! /usr/bin/env ruby
+
+require 'rubygems'
+require 'fuzzyclock'
+require 'optparse'
+
+class FuzzyClockCommand
+  
+  def self.run
+    fc = self.new
+    fc.parse_options
+    fc.execute
+  end
+  
+  def options
+    @options ||= {}
+  end
+  
+  def execute
+    t = FuzzyClock.new
+    print "It's about " if options[:about]
+    puts t.to_s
+  end
+  
+  def parse_options
+    OptionParser.new { |opts|
+      opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+      opts.on("-a", "--about", "Say about?") do |v|
+        self.options[:about] = v
+      end
+    }.parse!
+  end
+  
+end
+
+FuzzyClockCommand.run
