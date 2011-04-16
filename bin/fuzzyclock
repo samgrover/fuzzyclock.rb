@@ -18,6 +18,7 @@ class FuzzyClockCommand
   
   def execute
     t = FuzzyClock.new
+    t.locale = options[:locale] if options[:locale]
     print "It's about " if options[:about]
     puts t.to_s
   end
@@ -29,6 +30,11 @@ class FuzzyClockCommand
       opts.on("-a", "--about", "Say about?") do |v|
         self.options[:about] = v
       end
+      
+      opts.on("-l", "--locale", "Langage") do |v|
+        self.options[:locale] = v
+      end
+      
     }.parse!
   end
   

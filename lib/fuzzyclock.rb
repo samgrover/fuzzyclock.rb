@@ -1,61 +1,46 @@
 # encoding: utf-8
 
 require 'fuzzyclock/version'
+require 'fuzzyclock/locale/en'
+require 'fuzzyclock/locale/se'
 
 class FuzzyClock
-  @@HourToString = {
-    0  => "twelve",
-    1  => "one",
-    2  => "two",
-    3  => "three",
-    4  => "four",
-    5  => "five",
-    6  => "six",
-    7  => "seven",
-    8  => "eight",
-    9  => "nine",
-    10 => "ten",
-    11 => "eleven",
-    12 => "twelve",
-  }
-
-  attr_writer :time
-
-  def initialize(time=Time.now)
-    @time = time
-  end
-
-  # :s = suffix, :p = prefix
-  def fuzziness(min=0)
-    case min
-    when 0       then [:s, "o'clock"]
-    when 1..2    then [:p, "a bit after"]
-    when 3..7    then [:p, "five past"]
-    when 8..12   then [:p, "ten past"]
-    when 13..17  then [:p, "quarter past"]
-    when 18..22  then [:p, "twenty past"]
-    when 23..27  then [:p, "twenty five past"]
-    when 28..32  then rand(2) == 0 ? [:p, "half past"] : [:s, "thirty"] 
-    when 33..37  then [:p, "twenty five to"]
-    when 38..42  then [:p, "twenty to"]
-    when 43..47  then [:p, "quarter to"]
-    when 48..52  then [:p, "ten to"]
-    when 53..57  then [:p, "five to"]
-    when 58..59  then rand(2) == 0 ? [:p, "almost"] : [:p, "nearly"]
+  
+  class UnsupportedLocale < ArgumentError; end
+  
+  @@locale ||= {}
+  
+  def self.parse(time, locale = nil)
+    locale ||= :en
+    
+    raise UnsupportedLocale, %Q{Locale "#{locale}" is not supported.} unless @@locale.has_key?(locale.to_sym)
+    base = @@locale[locale.to_sym]
+    
+    this_hour = base[:hour][time.hour % 12]
+    next_hour = base[:hour][time.hour % 12 + 1]
+    
+    fuzz = nil
+    base[:min].each do |range, value|
+      fuzz = value if range.include?(time.min)
+      fuzz = fuzz[rand(fuzz.size)] if fuzz.is_a?(Array)
     end
+    
+    fuzz.gsub!('%0', this_hour)
+    fuzz.gsub!('%1', next_hour)
+    fuzz
   end
-
-  def to_s
-    hr, min = @time.hour, @time.min
-    if (33..59) === min
-      hr += 1
-    end
-    str = @@HourToString[hr % 12]
-    fuzz = fuzziness(min)
-    if fuzz[0] == :p
-      str = fuzz[1] + " " + str
-    elsif fuzz[0] == :s
-      str = str + " " + fuzz[1]
-    end
+  
+  attr_accessor :time
+  attr_accessor :locale
+  
+  def initialize(time = nil, locale = nil)
+    @time ||= Time.now
+    @locale ||= :en
   end
+  
+  def parse
+    self.class.parse(@time, @locale)
+  end
+  alias :to_s :parse
+  
 end
