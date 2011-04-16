@@ -17,17 +17,7 @@ class FuzzyClockCommand
   end
   
   def execute
-    t = FuzzyClock.new
-    t.locale = options[:locale] if options[:locale]
-    
-    output  = ""
-    output += "It's about " if options[:about]
-    output += t.to_s
-    
-    output.upcase! if options[:upcase]
-    output.capitalize! if options[:capitalize]
-    
-    puts output
+    puts FuzzyClock.parse(nil, options)
   end
   
   def parse_options
@@ -38,7 +28,7 @@ class FuzzyClockCommand
         self.options[:about] = v
       end
       
-      opts.on("-l", "--locale", "Langage") do |v|
+      opts.on("-l", "--locale [lang]", String, "Langage") do |v|
         self.options[:locale] = v
       end
       

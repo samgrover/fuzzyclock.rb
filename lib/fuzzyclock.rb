@@ -1,45 +1,55 @@
 # encoding: utf-8
 
-require 'fuzzyclock/version'
 require 'fuzzyclock/locale/en'
 require 'fuzzyclock/locale/se'
+require 'fuzzyclock/version'
 
 class FuzzyClock
   
   class UnsupportedLocale < ArgumentError; end
   
-  @@locale ||= {}
+  @@locales ||= {}
   
-  def self.parse(time, locale = nil)
-    locale ||= :en
-    
-    raise UnsupportedLocale, %Q{Locale "#{locale}" is not supported.} unless @@locale.has_key?(locale.to_sym)
-    base = @@locale[locale.to_sym]
-    
-    this_hour = base[:hour][time.hour % 12]
-    next_hour = base[:hour][time.hour % 12 + 1]
-    
-    fuzz = nil
-    base[:min].each do |range, value|
-      fuzz = value if range.include?(time.min)
-      fuzz = fuzz[rand(fuzz.size)] if fuzz.is_a?(Array)
-    end
-    
-    fuzz.gsub!('%0', this_hour)
-    fuzz.gsub!('%1', next_hour)
-    fuzz
+  def self.parse(time, opts = {})
+    self.new(time, opts).to_s
   end
   
   attr_accessor :time
   attr_accessor :locale
+  attr_accessor :about
+  attr_accessor :capitalize
+  attr_accessor :upcase
   
-  def initialize(time = nil, locale = nil)
-    @time ||= Time.now
-    @locale ||= :en
+  def initialize(time = nil, opts = {})
+    @time       = time              || Time.now
+    @locale     = opts[:locale]     || :en
+    @about      = opts[:about]      || false
+    @capitalize = opts[:capitalize] || false
+    @upcase     = opts[:upcase]     || false
   end
   
   def parse
-    self.class.parse(@time, @locale)
+    raise UnsupportedLocale, %Q{Locale "#{@locale}" is not supported.} unless @@locales.has_key?(@locale.to_sym)
+    lang = @@locales[@locale.to_sym]
+    
+    this_hour = lang[:hour][@time.hour % 12]
+    next_hour = lang[:hour][@time.hour % 12 + 1]
+    
+    fuzz = nil
+    lang[:min].each do |range, value|
+      if range.include?(@time.min)
+        fuzz = value.is_a?(Array) ? value[rand(value.size)] : value
+      end
+    end
+    
+    fuzz.gsub!('%0', this_hour)
+    fuzz.gsub!('%1', next_hour)
+    
+    fuzz = lang[:about].gsub('%t', fuzz) if @about
+    fuzz.capitalize! if @capitalize
+    fuzz.upcase! if @upcase
+    
+    fuzz
   end
   alias :to_s :parse
   

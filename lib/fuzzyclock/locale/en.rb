@@ -1,8 +1,9 @@
 # encoding: utf-8
 
 class FuzzyClock
-  @@locale ||= {}
-  @@locale[:en] = {
+  @@locales ||= {}
+  @@locales[:en] = {
+    :about => "it's about %t",
     :hour => {
       0  => "twelve",
       1  => "one",
