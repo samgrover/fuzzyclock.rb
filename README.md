@@ -18,5 +18,8 @@ e.g. 10:34 is shown as "twenty five to eleven"
     $ fuzzyclock --help
     Usage: fuzzyclock [options]
         -a, --about                      Say about?
+        -l, --locale [lang]              Langage
+        -U, --uppercase                  UPPERCASE OUTPUT
+        -C, --capitalize                 Capitalize Output
 
     
