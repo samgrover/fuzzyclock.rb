@@ -24,11 +24,11 @@ class FuzzyClockCommand
     OptionParser.new { |opts|
       opts.banner = "Usage: #{File.basename(__FILE__)} [options]"
 
-      opts.on("-a", "--about", "Say about?") do |v|
+      opts.on("-a", "--about", "it's about [...]") do |v|
         self.options[:about] = v
       end
       
-      opts.on("-l", "--locale [lang]", String, "Langage") do |v|
+      opts.on("-l", "--locale [lang]", String, "langage") do |v|
         self.options[:locale] = v
       end
       
@@ -36,7 +36,7 @@ class FuzzyClockCommand
         self.options[:upcase] = v
       end
       
-      opts.on("-C", "--capitalize", "Capitalize Output") do |v|
+      opts.on("-C", "--capitalize", "Capitalize output") do |v|
         self.options[:capitalize] = v
       end
       
