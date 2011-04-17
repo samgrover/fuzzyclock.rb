@@ -27,13 +27,13 @@ class FuzzyClock
       13..17 => "quarter past %0",
       18..22 => "twenty past %0",
       23..27 => "twenty five past %0",
-      28..32 => ["half past %0", "%0 thirty"],
+      28..32 => ["half past %0", "%0 thirty"], # randomly picked
       33..37 => "twenty five to %1",
       38..42 => "twenty to %1",
       43..47 => "quarter to %1",
       48..52 => "ten to %1",
       53..57 => "five to %1",
-      58..59 => ["almost %1", "nearly %1"]
+      58..59 => ["almost %1", "nearly %1"] # randomly picked
     }
   }
 end
