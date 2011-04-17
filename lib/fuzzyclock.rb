@@ -2,6 +2,7 @@
 
 require 'fuzzyclock/locale/en'
 require 'fuzzyclock/locale/se'
+require 'fuzzyclock/locale/el'
 require 'fuzzyclock/version'
 
 class FuzzyClock
